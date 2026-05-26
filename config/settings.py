@@ -4,14 +4,28 @@ Django settings for Ka'sam Construction Enterprise
 
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables
+from dotenv import load_dotenv
+load_dotenv()
+
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-apex-construction-change-this-in-production-xyz123')
 
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',') if os.environ.get('ALLOWED_HOSTS') else ['*']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# CSRF and CORS Settings for Vercel
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'localhost:3000').split(',')
+
+# Extract domain for CSRF
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        'https://*.vercel.app',
+    ] + CSRF_TRUSTED_ORIGINS
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -56,12 +70,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# Database configuration - Use PostgreSQL in production
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -95,3 +119,45 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Security Settings for Production (Vercel)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_SECURITY_POLICY = {
+        'default-src': ("'self'",),
+        'style-src': ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"),
+        'script-src': ("'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"),
+        'img-src': ("'self'", "data:", "https:"),
+        'font-src': ("'self'", "data:", "https://cdn.jsdelivr.net"),
+    }
+    X_FRAME_OPTIONS = 'DENY'
+else:
+    # Development settings
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+
+# Logging configuration for production
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}

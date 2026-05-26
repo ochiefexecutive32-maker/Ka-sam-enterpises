@@ -1,9 +1,12 @@
 ﻿# Python
 venv/
+.venv/
 __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
+env/
+ENV/
 
 # Django
 db.sqlite3
@@ -21,3 +24,22 @@ Thumbs.db
 
 # Environment
 .env
+.env.local
+.env.*.local
+
+# IDE
+*.swp
+*.swo
+*~
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Vercel
+.vercel/
+out/
+
+# Node (if using Node tools)
+node_modules/
+npm-debug.log
+
