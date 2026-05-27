@@ -18,13 +18,14 @@ DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# CSRF and CORS Settings for Vercel
+# CSRF and CORS Settings for Netlify
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', 'localhost:3000').split(',')
 
 # Extract domain for CSRF
 if not DEBUG:
     CSRF_TRUSTED_ORIGINS = [
-        'https://*.vercel.app',
+        'https://*.netlify.app',
+        'https://*.netlify.dev',
     ] + CSRF_TRUSTED_ORIGINS
 
 INSTALLED_APPS = [
