@@ -1,84 +1,91 @@
-# Ka'sam Construction Enterprise
+# Ka'sam Construction Enterprise - Node.js
 
-Ka'sam Construction Enterprise is a Django-based website for a construction company. The project includes:
+Ka'sam Construction Enterprise is a modern Node.js/Express-based website for a construction company. The project includes:
 
 - Services, projects, team members, testimonials, and machine hire models
 - A contact page with message and consultation forms
-- Dynamic templates powered by Django views and models
+- Dynamic templates powered by Express routes and SQLite database
 - Static assets for CSS and JavaScript
 - **Production-ready for Vercel deployment**
 
 ## Quick Start (Local Development)
 
 ### Prerequisites
-- Python 3.11+
-- pip
-- Virtual environment support
+- Node.js 18+ and npm
+- SQLite3 (included with Node.js sqlite3 package)
 
 ### Setup
 
-1. Create and activate a Python virtual environment:
-   ```powershell
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
+1. Install dependencies:
+   ```bash
+   npm install
    ```
 
-2. Install dependencies:
-   ```powershell
-   pip install -r requirements.txt
-   ```
-
-3. Create a `.env` file (copy from `.env.example`):
-   ```powershell
-   copy .env.example .env
+2. Create a `.env` file (copy from `.env.example`):
+   ```bash
+   cp .env.example .env
    ```
    
    For local development, the defaults work fine.
 
-4. Apply database migrations:
-   ```powershell
-   python manage.py migrate
+3. Initialize the database:
+   ```bash
+   npm run migrate
    ```
 
-5. Create a superuser (admin account):
-   ```powershell
-   python manage.py createsuperuser
+4. Run the development server:
+   ```bash
+   npm run dev
    ```
 
-6. Run the development server:
-   ```powershell
-   python manage.py runserver
-   ```
-
-7. Open the site in your browser at `http://127.0.0.1:8000/`
+5. Open the site in your browser at `http://localhost:3000/`
 
 ## Project Structure
 
 ```
-apex-construction/
-├── apex/                      # Main Django app
-│   ├── models.py             # Database models
-│   ├── views.py              # View logic
-│   ├── urls.py               # URL routing
-│   ├── forms.py              # Form definitions
-│   ├── templates/            # HTML templates
-│   └── migrations/           # Database migrations
-├── config/                    # Django configuration
-│   ├── settings.py           # Settings (production-ready)
-│   ├── urls.py               # Main URL configuration
-│   ├── wsgi.py               # WSGI application
-│   └── asgi.py               # ASGI application
+ka-sam-enterprises/
+├── src/                       # Source code
+│   ├── models/               # Database models and queries
+│   │   └── index.js          # Model functions
+│   ├── controllers/          # Route handlers
+│   │   └── index.js          # Controller functions
+│   ├── routes/               # Express routes
+│   │   └── index.js          # Route definitions
+│   ├── db/                   # Database setup
+│   │   └── index.js          # SQLite configuration
+│   ├── utils/                # Utility functions
+│   │   └── helpers.js        # Helper functions
+│   └── middleware/           # Custom middleware
+├── views/                     # EJS templates
+│   ├── home.html
+│   ├── services.html
+│   ├── projects.html
+│   ├── about.html
+│   ├── contact.html
+│   ├── error.html
+│   └── 404.html
 ├── static/                    # Static files (CSS, JS, images)
 │   ├── css/
 │   ├── js/
 │   └── images/
 ├── media/                     # User-uploaded files
-├── api/                       # Vercel serverless function
-│   └── index.py              # Serverless handler
+├── data/                      # SQLite database file
+├── scripts/                   # Utility scripts
+│   └── migrate.js            # Database migration script
+├── server.js                 # Main application entry point
 ├── vercel.json               # Vercel configuration
-├── runtime.txt               # Python version for deployment
-└── requirements.txt          # Python dependencies
+├── package.json              # Node.js dependencies
+└── .env.example              # Environment variables template
 ```
+
+## API Endpoints
+
+- `GET /` - Home page
+- `GET /services` - Services listing
+- `GET /projects` - Projects and machine hire
+- `GET /about` - Team information
+- `GET /contact` - Contact form
+- `POST /contact` - Submit contact or consultation form
 
 ## Deployment to Vercel
 
@@ -89,74 +96,76 @@ For detailed deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)
 1. **Push to GitHub**
    ```bash
    git add .
-   git commit -m "Ready for Vercel deployment"
+   git commit -m "Convert to Node.js - Ready for Vercel deployment"
    git push origin main
    ```
 
 2. **Connect to Vercel**
    - Visit https://vercel.com
    - Import your GitHub repository
-   - Add environment variables (see DEPLOYMENT.md)
+   - Vercel will auto-detect Node.js
+   - Environment variables are optional (all have defaults)
    - Deploy!
 
-### Required Environment Variables for Vercel:
-- `SECRET_KEY` - Django secret key
-- `DEBUG` - Set to `False`
-- `ALLOWED_HOSTS` - Your domain
-- `DATABASE_URL` - PostgreSQL connection string
-- `CSRF_TRUSTED_ORIGINS` - Your domain for CSRF protection
+### Environment Variables for Vercel:
+- `NODE_ENV` - Set to `production`
+- `SESSION_SECRET` - Your session secret (auto-generated if not set)
 
 ## Key Features
 
 - ✅ **Production-Ready**: Configured for Vercel serverless deployment
-- ✅ **Database**: SQLite (dev) or PostgreSQL (production)
-- ✅ **Static Files**: WhiteNoise for optimized delivery
-- ✅ **Security**: Security headers, HTTPS, CSRF protection
-- ✅ **Caching**: View caching for performance
-- ✅ **Responsive**: Bootstrap 5 integration with Crispy Forms
+- ✅ **Database**: SQLite with persistent file storage
+- ✅ **Static Files**: Optimized serving of CSS, JS, and images
+- ✅ **Security**: HTTPS support, session management
+- ✅ **Caching**: HTTP caching for performance
+- ✅ **Responsive**: Bootstrap 5 integration
 
 ## Development Commands
 
-```powershell
-# Run migrations
-python manage.py migrate
+```bash
+# Install dependencies
+npm install
 
-# Create superuser
-python manage.py createsuperuser
+# Run development server (with auto-reload)
+npm run dev
 
-# Create migrations for changes
-python manage.py makemigrations
+# Run production server
+npm start
 
-# Collect static files
-python manage.py collectstatic --noinput
+# Initialize/migrate database
+npm run migrate
 
-# Access Django admin
-# Navigate to http://127.0.0.1:8000/admin/
+# Build for production
+npm run build
 ```
 
 ## Technologies Used
 
-- **Framework**: Django 4.2+
-- **Database**: SQLite (dev), PostgreSQL (production)
-- **Frontend**: Bootstrap 5, Crispy Forms
+- **Runtime**: Node.js 18+
+- **Framework**: Express.js 4.18+
+- **Database**: SQLite3
+- **Templating**: EJS
 - **Deployment**: Vercel
-- **Static Files**: WhiteNoise
+- **Session Management**: express-session
+- **Environment**: dotenv
 
 ## Notes
 
-- The project uses WhiteNoise for optimized static file handling
-- All security settings are configured for production
-- Database migrations run automatically on deployment
-- Debug mode is disabled in production
+- The project uses SQLite for both development and production
+- Database file is stored in `data/app.db`
+- All static files are served from the `static/` directory
+- User-uploaded media is stored in the `media/` directory
+- Sessions are managed with express-session using memory store
 
 ## Troubleshooting
 
 If you encounter issues:
 
 1. Check [DEPLOYMENT.md](DEPLOYMENT.md) for deployment-specific issues
-2. Verify environment variables are set correctly
+2. Verify `.env` file is configured correctly
 3. Check the Vercel logs in your dashboard
-4. Ensure all dependencies are installed: `pip install -r requirements.txt`
+4. Ensure all dependencies are installed: `npm install`
+5. Try clearing the cache: `rm -rf node_modules package-lock.json && npm install`
 
 ## License
 

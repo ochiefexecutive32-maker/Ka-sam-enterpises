@@ -1,13 +1,29 @@
 #!/bin/bash
 
-# Apex Construction Build Script for Vercel
-echo "Installing dependencies..."
-pip install -r requirements.txt
+# Ka'sam Enterprises - Node.js Build Script for Vercel Deployment
 
-echo "Collecting static files..."
-python manage.py collectstatic --noinput
+echo "🔨 Building Ka'sam Enterprises Node.js Application..."
 
-echo "Running database migrations..."
-python manage.py migrate --noinput
+# Install dependencies
+echo "📦 Installing dependencies..."
+npm install
 
-echo "Build complete!"
+# Create data directory for SQLite database
+echo "📁 Creating data directory..."
+mkdir -p data
+
+# Initialize database
+echo "🗄️ Initializing database..."
+node scripts/migrate.js
+
+# Create necessary directories
+echo "📂 Creating directories..."
+mkdir -p static/images
+mkdir -p static/css
+mkdir -p static/js
+mkdir -p media/team
+mkdir -p media/projects
+mkdir -p media/machines
+
+echo "✅ Build complete!"
+echo "🚀 Ready for deployment"
